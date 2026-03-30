@@ -12,7 +12,7 @@ export async function GET() {
     });
 
     return NextResponse.json(
-      orders.map((o) => ({
+      orders.map((o: typeof orders[number]) => ({
         ...o,
         items: JSON.parse(o.items),
       }))
