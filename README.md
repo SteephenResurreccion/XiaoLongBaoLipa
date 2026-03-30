@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Xiao Long Bow — Website
 
-## Getting Started
+Xiao Long Bow is a Filipino home-based food business selling handmade Chocolate Xiao Long Bao, based in Lipa City, Batangas.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Framework**: Next.js 16 (App Router, TypeScript)
+- **Styling**: Tailwind CSS
+- **Database**: SQLite via Prisma 7 + `@prisma/adapter-libsql`
+- **Auth**: NextAuth.js (Google OAuth — owner only)
+- **Payments**: PayMongo (GCash), Stripe (card)
+- **SMS**: Semaphore
+- **Delivery**: Lalamove API
+
+---
+
+## Before You Launch — Accounts to Create
+
+1. **Semaphore** — semaphore.co.ph — Load ₱100 credits to start
+2. **PayMongo** — paymongo.com — Register business for GCash
+3. **Stripe** — stripe.com — For card payments
+4. **Lalamove Business Account** — lalamove.com — Apply for API access
+5. **Google Cloud Console** — Create OAuth credentials for admin login
+6. **Google Analytics** — analytics.google.com — Create GA4 property
+7. **Vercel** — vercel.com — For deployment
+
+---
+
+## Setup
+
+### 1. Install dependencies
+```
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Configure .env
+Fill in your API keys (see .env for all variables).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Set up the database
+```
+npx prisma migrate dev
+npx prisma generate
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Run locally
+```
+npm run dev
+```
 
-## Learn More
+- Customer site: http://localhost:3000
+- Admin dashboard: http://localhost:3000/admin
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Google OAuth Setup (Admin Login)
+1. Go to console.cloud.google.com → Create project
+2. Credentials → Create OAuth 2.0 Client ID
+3. Authorized redirect URI: https://your-domain.com/api/auth/callback/google
+4. Set OWNER_GOOGLE_EMAIL to your Google email — only this can log in
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Stripe Webhook
+Endpoint: https://your-domain.com/api/payment/stripe-webhook
+Event: payment_intent.succeeded
 
-## Deploy on Vercel
+## Lalamove Notes
+- Set LALAMOVE_ENVIRONMENT="sandbox" for dev (returns mock ₱150 fee)
+- Set LALAMOVE_ENVIRONMENT="production" for live
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Production Deployment
+- Vercel: push to GitHub, connect repo on vercel.com, set env vars
+- Hostinger: npm run build, upload project, set start command: npm start
+- For Hostinger production, consider switching to PostgreSQL (update schema + adapter)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+app/(public)/     — Customer pages (Home, Menu, Track, About, FAQ, etc.)
+app/admin/        — Admin dashboard (Google OAuth protected)
+app/api/          — All backend API routes
+lib/              — Prisma, Stripe, PayMongo, Lalamove, Semaphore clients

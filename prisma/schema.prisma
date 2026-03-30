@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Order {
+  id               String      @id @default(cuid())
+  orderRef         String      @unique
+  customerName     String
+  mobileNumber     String
+  items            String
+  subtotal         Float
+  promoCode        String?
+  discount         Float       @default(0)
+  reservationFee   Float       @default(50)
+  deliveryMethod   String
+  deliveryAddress  String?
+  deliveryFee      Float       @default(0)
+  total            Float
+  remainingBalance Float
+  paymentMethod    String
+  paymentIntentId  String?
+  orderNotes       String?
+  scheduledDate    String
+  timeSlot         String
+  status           String      @default("PENDING")
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  promoCodeRef     PromoCode?  @relation(fields: [promoCode], references: [code])
+}
+
+model BlockedDate {
+  id        String   @id @default(cuid())
+  date      String   @unique
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
+model PromoCode {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  partnerName   String
+  discountType  String
+  discountValue Float
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  orders        Order[]
+}
+
+model SiteSettings {
+  id            String  @id @default("settings")
+  isOpen        Boolean @default(true)
+  closedMessage String  @default("We're currently closed. Check back soon!")
+  pickupAddress String  @default("Lipa City, Batangas")
+  pickupLat     Float   @default(13.9411)
+  pickupLng     Float   @default(121.1631)
+}
+
+model ResellerApplication {
+  id         String   @id @default(cuid())
+  name       String
+  mobile     String
+  email      String
+  address    String
+  reason     String
+  experience String?
+  createdAt  DateTime @default(now())
+}
+
+model CommissionerApplication {
+  id        String   @id @default(cuid())
+  name      String
+  mobile    String
+  email     String
+  address   String
+  platform  String
+  followers String?
+  reason    String
+  createdAt DateTime @default(now())
+}
