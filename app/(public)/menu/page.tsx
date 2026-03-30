@@ -195,10 +195,8 @@ export default function MenuPage() {
       <div className="max-w-7xl mx-auto px-5 py-10">
         <div className="grid lg:grid-cols-3 gap-8">
 
-          {/* ── LEFT: Products + Form ── */}
-          <div className="lg:col-span-2 space-y-6">
-
-            {/* Product cards */}
+          {/* ── Products (always first) ── */}
+          <div className="lg:col-span-2">
             <div className="grid sm:grid-cols-3 gap-4">
               {MENU_ITEMS.map((item) => {
                 const cartItem = items.find((i) => i.id === item.id && i.size === item.size);
@@ -246,7 +244,88 @@ export default function MenuPage() {
               })}
             </div>
 
-            {/* Form */}
+          </div>
+
+          {/* ── RIGHT: Sticky cart (spans both rows on desktop) ── */}
+          <div className="lg:col-span-1 lg:row-span-2">
+            <div className="sticky top-20 bg-white rounded-2xl border border-gray-100 overflow-hidden">
+              <div className="px-6 py-5 border-b border-gray-100">
+                <p className="font-black text-lg">Your Cart</p>
+              </div>
+
+              {items.length === 0 ? (
+                <div className="px-6 py-10 text-center">
+                  <p className="text-gray-400 text-sm">No items yet.</p>
+                  <p className="text-gray-300 text-xs mt-1">Add sizes above to start your order.</p>
+                </div>
+              ) : (
+                <div className="px-6 py-5">
+                  <div className="space-y-4 mb-5">
+                    {items.map((item: CartItem) => (
+                      <div key={`${item.id}-${item.size}`} className="flex items-center gap-3">
+                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                          <Image src={PRODUCT_IMAGES[item.id]} alt={item.size} fill className="object-cover" sizes="48px" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-sm">{item.size}</p>
+                          <p className="text-gray-400 text-xs">{item.pieces} pcs · {formatPrice(item.price)} each</p>
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button type="button" onClick={() => updateQty(item.id, item.size, item.qty - 1)}
+                            className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors">
+                            <Minus size={10} />
+                          </button>
+                          <span className="w-5 text-center font-black text-sm">{item.qty}</span>
+                          <button type="button" onClick={() => updateQty(item.id, item.size, item.qty + 1)}
+                            className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors">
+                            <Plus size={10} />
+                          </button>
+                          <button type="button" onClick={() => removeFromCart(item.id, item.size)}
+                            className="w-6 h-6 rounded-full flex items-center justify-center text-gray-300 hover:text-gray-600 hover:bg-gray-100 transition-colors ml-1">
+                            <X size={10} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t border-gray-100 pt-4 space-y-2 text-sm">
+                    <div className="flex justify-between text-gray-500">
+                      <span>Subtotal</span>
+                      <span className="font-bold text-black">{formatPrice(subtotal)}</span>
+                    </div>
+                    {discount > 0 && (
+                      <div className="flex justify-between text-green-600">
+                        <span>Discount</span>
+                        <span className="font-bold">−{formatPrice(discount)}</span>
+                      </div>
+                    )}
+                    {deliveryMethod === "DELIVERY" && effectiveDeliveryFee > 0 && (
+                      <div className="flex justify-between text-gray-500">
+                        <span>Delivery</span>
+                        <span className="font-bold text-black">{formatPrice(effectiveDeliveryFee)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between font-black text-base border-t border-gray-100 pt-2">
+                      <span>Total</span>
+                      <span>{formatPrice(total)}</span>
+                    </div>
+                    <div className="flex justify-between text-xs text-[#E83A87] font-bold">
+                      <span>Reservation (now)</span>
+                      <span>₱50</span>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>Remaining on delivery</span>
+                      <span className="font-bold text-black">{formatPrice(remainingBalance)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ── Form (below products on desktop, below cart on mobile) ── */}
+          <div className="lg:col-span-2">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
               {/* Schedule */}
@@ -401,83 +480,6 @@ export default function MenuPage() {
             </form>
           </div>
 
-          {/* ── RIGHT: Sticky cart ── */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-20 bg-white rounded-2xl border border-gray-100 overflow-hidden">
-              <div className="px-6 py-5 border-b border-gray-100">
-                <p className="font-black text-lg">Your Cart</p>
-              </div>
-
-              {items.length === 0 ? (
-                <div className="px-6 py-10 text-center">
-                  <p className="text-gray-400 text-sm">No items yet.</p>
-                  <p className="text-gray-300 text-xs mt-1">Add sizes above to start your order.</p>
-                </div>
-              ) : (
-                <div className="px-6 py-5">
-                  <div className="space-y-4 mb-5">
-                    {items.map((item: CartItem) => (
-                      <div key={`${item.id}-${item.size}`} className="flex items-center gap-3">
-                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                          <Image src={PRODUCT_IMAGES[item.id]} alt={item.size} fill className="object-cover" sizes="48px" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-bold text-sm">{item.size}</p>
-                          <p className="text-gray-400 text-xs">{item.pieces} pcs · {formatPrice(item.price)} each</p>
-                        </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <button type="button" onClick={() => updateQty(item.id, item.size, item.qty - 1)}
-                            className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors">
-                            <Minus size={10} />
-                          </button>
-                          <span className="w-5 text-center font-black text-sm">{item.qty}</span>
-                          <button type="button" onClick={() => updateQty(item.id, item.size, item.qty + 1)}
-                            className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors">
-                            <Plus size={10} />
-                          </button>
-                          <button type="button" onClick={() => removeFromCart(item.id, item.size)}
-                            className="w-6 h-6 rounded-full flex items-center justify-center text-gray-300 hover:text-gray-600 hover:bg-gray-100 transition-colors ml-1">
-                            <X size={10} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="border-t border-gray-100 pt-4 space-y-2 text-sm">
-                    <div className="flex justify-between text-gray-500">
-                      <span>Subtotal</span>
-                      <span className="font-bold text-black">{formatPrice(subtotal)}</span>
-                    </div>
-                    {discount > 0 && (
-                      <div className="flex justify-between text-green-600">
-                        <span>Discount</span>
-                        <span className="font-bold">−{formatPrice(discount)}</span>
-                      </div>
-                    )}
-                    {deliveryMethod === "DELIVERY" && effectiveDeliveryFee > 0 && (
-                      <div className="flex justify-between text-gray-500">
-                        <span>Delivery</span>
-                        <span className="font-bold text-black">{formatPrice(effectiveDeliveryFee)}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between font-black text-base border-t border-gray-100 pt-2">
-                      <span>Total</span>
-                      <span>{formatPrice(total)}</span>
-                    </div>
-                    <div className="flex justify-between text-xs text-[#E83A87] font-bold">
-                      <span>Reservation (now)</span>
-                      <span>₱50</span>
-                    </div>
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Remaining on delivery</span>
-                      <span className="font-bold text-black">{formatPrice(remainingBalance)}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
         </div>
       </div>
     </div>
