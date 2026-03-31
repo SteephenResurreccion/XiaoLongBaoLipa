@@ -373,13 +373,15 @@ export default function MenuPage() {
                 <h2 className="font-black text-xl mb-5">Schedule</h2>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Date" error={errors.scheduledDate?.message}>
-                    <input
-                      type="date"
-                      min={format(addDays(new Date(), 1), "yyyy-MM-dd")}
-                      {...register("scheduledDate")}
-                      className={`${inputClass} ${scheduledDate && isDateBlocked(scheduledDate) ? "border-red-400 ring-2 ring-red-200" : ""}`}
-                      style={{ colorScheme: "light" }}
-                    />
+                    <div className="w-full overflow-hidden">
+                      <input
+                        type="date"
+                        min={format(addDays(new Date(), 1), "yyyy-MM-dd")}
+                        {...register("scheduledDate")}
+                        className={`${inputClass} ${scheduledDate && isDateBlocked(scheduledDate) ? "border-red-400 ring-2 ring-red-200" : ""}`}
+                        style={{ colorScheme: "light", width: "100%", boxSizing: "border-box" }}
+                      />
+                    </div>
                     {scheduledDate && isDateBlocked(scheduledDate) && (
                       <p className="text-red-500 text-xs mt-1.5 font-medium">This date is unavailable. Please choose another.</p>
                     )}
