@@ -78,7 +78,6 @@ export default function MenuPage() {
   const deliveryMethod = watch("deliveryMethod");
   const promoCodeValue = watch("promoCode");
   const paymentMethod = watch("paymentMethod");
-  const scheduledDate = watch("scheduledDate");
 
   const subtotal = cartTotal;
   const effectiveDeliveryFee = deliveryMethod === "DELIVERY" ? deliveryFee : 0;
@@ -228,7 +227,6 @@ export default function MenuPage() {
     }
   }
 
-  const isDateBlocked = (date: string) => blockedDates.includes(date);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -368,26 +366,24 @@ export default function MenuPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
               {/* Schedule */}
-              <div className={`${sectionClass} overflow-hidden`}>
+              <div className={sectionClass}>
                 <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#E83A87] mb-1">Step 1</p>
                 <h2 className="font-black text-xl mb-5">Schedule</h2>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Date" error={errors.scheduledDate?.message}>
-                    <input
-                      type="date"
-                      min={format(addDays(new Date(), 1), "yyyy-MM-dd")}
+                    <select
                       {...register("scheduledDate")}
-                      className={`${inputClass} ${scheduledDate && isDateBlocked(scheduledDate) ? "border-red-400 ring-2 ring-red-200" : ""}`}
-                      style={{ colorScheme: "light", fontSize: "16px", width: "100%" }}
-                    />
-                    {scheduledDate && isDateBlocked(scheduledDate) && (
-                      <p className="text-red-500 text-xs mt-1.5 font-medium">This date is unavailable. Please choose another.</p>
-                    )}
-                    {blockedDates.length > 0 && !(scheduledDate && isDateBlocked(scheduledDate)) && (
-                      <p className="text-xs text-gray-400 mt-1.5">
-                        Unavailable dates: {blockedDates.join(", ")}
-                      </p>
-                    )}
+                      className={inputClass}
+                    >
+                      <option value="">Select a date</option>
+                      {Array.from({ length: 30 }, (_, i) => addDays(new Date(), i + 1)).filter(
+                        (d) => !blockedDates.includes(format(d, "yyyy-MM-dd"))
+                      ).map((d) => (
+                        <option key={format(d, "yyyy-MM-dd")} value={format(d, "yyyy-MM-dd")}>
+                          {format(d, "EEE, MMM d")}
+                        </option>
+                      ))}
+                    </select>
                   </Field>
                   <Field label="Time Slot" error={errors.timeSlot?.message}>
                     <select {...register("timeSlot")} className={inputClass}>
