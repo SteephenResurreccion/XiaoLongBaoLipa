@@ -26,7 +26,7 @@ export default function HomePage() {
       {/* ── HERO ── */}
       <section className="relative min-h-[92vh] flex items-end overflow-hidden bg-black">
         <Image
-          src="/hero.jpg"
+          src="/Gemini_Generated_Image_9glzne9glzne9glz.png"
           alt="Chocolate Xiao Long Bao with molten chocolate dripping"
           fill
           priority
