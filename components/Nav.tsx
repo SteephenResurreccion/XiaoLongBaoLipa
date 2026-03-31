@@ -1,11 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 const FB_URL = "https://www.facebook.com/share/1Gm8jj1p9N/?mibextid=wwXIfr";
+
+const announcements = [
+  "Small · 5 pieces · ₱99",
+  "Medium · 10 pieces · ₱169",
+  "Large · 15 pieces · ₱219",
+  "Molten chocolate fills every single bite",
+  "Handmade fresh for every order",
+  "Free pickup · Delivery via Lalamove",
+  "No minimum order — mix any size",
+  "Pay online via GCash or card",
+  "Made in Brgy. Tibig, Lipa City",
+  "Est. 2026 · Chocolate XLB",
+];
 
 const navLinks = [
   { href: "/menu", label: "Order" },
@@ -18,18 +31,33 @@ const navLinks = [
 export default function Nav() {
   const [open, setOpen] = useState(false);
   const { cartCount } = useCart();
+  const [idx, setIdx] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setIdx((i) => (i + 1) % announcements.length);
+        setVisible(true);
+      }, 350);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <>
-      {/* Announcement bar */}
-      <div className="bg-black text-white text-[11px] py-2.5 overflow-hidden">
-        <div className="marquee-track whitespace-nowrap font-medium tracking-[0.15em] uppercase">
-          {Array(6).fill(null).map((_, i) => (
-            <span key={i} className="px-10">
-              Handmade in Lipa City &nbsp;·&nbsp; Order for delivery &amp; pickup &nbsp;·&nbsp; No minimum order &nbsp;·&nbsp; Molten chocolate inside every bite
-            </span>
-          ))}
-        </div>
+      {/* Announcement bar — vertical cycling ticker */}
+      <div className="bg-black text-white text-[11px] py-2.5 flex items-center justify-center overflow-hidden h-8">
+        <span
+          className="tracking-[0.2em] uppercase font-medium transition-all duration-300"
+          style={{
+            opacity: visible ? 1 : 0,
+            transform: visible ? "translateY(0)" : "translateY(-6px)",
+          }}
+        >
+          {announcements[idx]}
+        </span>
       </div>
 
       {/* Nav */}

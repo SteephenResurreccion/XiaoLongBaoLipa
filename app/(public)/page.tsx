@@ -101,7 +101,7 @@ export default function HomePage() {
 
       {/* ── TICKER ── */}
       <div className="bg-black py-5 overflow-hidden">
-        <div className="marquee-track text-white text-sm font-bold tracking-widest uppercase whitespace-nowrap">
+        <div className="marquee-track text-white text-sm font-bold tracking-widest uppercase whitespace-nowrap" style={{ animationDuration: "55s" }}>
           {Array(8).fill(null).map((_, i) => (
             <span key={i} className="px-8">
               Chocolate Xiao Long Bao &nbsp;·&nbsp; Made Fresh &nbsp;·&nbsp; Lipa City Batangas &nbsp;·&nbsp; Order Online &nbsp;·&nbsp;
