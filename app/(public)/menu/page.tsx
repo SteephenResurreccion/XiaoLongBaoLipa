@@ -268,14 +268,14 @@ export default function MenuPage() {
                         <p className="font-black text-lg text-[#E83A87]">{formatPrice(item.price)}</p>
                       </div>
                       {cartItem ? (
-                        <div className="flex items-center justify-between border border-gray-200 rounded-full px-2 py-1">
+                        <div className="flex items-center justify-between border border-gray-200 rounded-full px-1 py-1">
                           <button type="button" onClick={() => updateQty(item.id, item.size, cartItem.qty - 1)}
-                            className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors touch-manipulation">
                             <Minus size={14} />
                           </button>
                           <span className="font-black text-sm w-6 text-center">{cartItem.qty}</span>
                           <button type="button" onClick={() => updateQty(item.id, item.size, cartItem.qty + 1)}
-                            className="w-7 h-7 flex items-center justify-center rounded-full bg-black text-white hover:bg-gray-800 transition-colors">
+                            className="w-9 h-9 flex items-center justify-center rounded-full bg-black text-white hover:bg-gray-800 transition-colors touch-manipulation">
                             <Plus size={14} />
                           </button>
                         </div>
@@ -317,19 +317,19 @@ export default function MenuPage() {
                           <p className="font-bold text-sm">{item.size}</p>
                           <p className="text-gray-400 text-xs">{item.pieces} pcs · {formatPrice(item.price)} each</p>
                         </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
+                        <div className="flex items-center gap-1 shrink-0">
                           <button type="button" onClick={() => updateQty(item.id, item.size, item.qty - 1)}
-                            className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors">
-                            <Minus size={10} />
+                            className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors touch-manipulation">
+                            <Minus size={12} />
                           </button>
                           <span className="w-5 text-center font-black text-sm">{item.qty}</span>
                           <button type="button" onClick={() => updateQty(item.id, item.size, item.qty + 1)}
-                            className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors">
-                            <Plus size={10} />
+                            className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors touch-manipulation">
+                            <Plus size={12} />
                           </button>
                           <button type="button" onClick={() => removeFromCart(item.id, item.size)}
-                            className="w-6 h-6 rounded-full flex items-center justify-center text-gray-300 hover:text-gray-600 hover:bg-gray-100 transition-colors ml-1">
-                            <X size={10} />
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-gray-600 hover:bg-gray-100 transition-colors touch-manipulation">
+                            <X size={12} />
                           </button>
                         </div>
                       </div>

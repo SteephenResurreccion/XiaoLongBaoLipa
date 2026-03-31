@@ -60,7 +60,7 @@ export default function Footer() {
           <div>
             <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-500 mb-5">Order</p>
             <p className="text-gray-400 text-sm mb-5 leading-relaxed">
-              Fresh Chocolate XLB, made to order. Reserve your slot with just ₱50.
+              Fresh Chocolate XLB, made to order. Pay securely online via GCash or card.
             </p>
             <Link
               href="/menu"

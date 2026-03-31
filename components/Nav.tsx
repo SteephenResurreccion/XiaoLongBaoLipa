@@ -71,7 +71,7 @@ export default function Nav() {
             <button
               onClick={() => setOpen(!open)}
               aria-label="Toggle menu"
-              className="text-black p-1"
+              className="text-black p-2 -ml-2 touch-manipulation"
             >
               {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -126,12 +126,12 @@ export default function Nav() {
 
         {/* Mobile drawer */}
         {open && (
-          <div className="md:hidden bg-white border-t border-gray-100 px-5 py-6 flex flex-col gap-5">
+          <div className="md:hidden bg-white border-t border-gray-100 px-5 py-4 flex flex-col">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-bold tracking-widest uppercase text-black hover:text-[#E83A87] transition-colors"
+                className="text-sm font-bold tracking-widest uppercase text-black hover:text-[#E83A87] transition-colors py-3 touch-manipulation"
                 onClick={() => setOpen(false)}
               >
                 {link.label}

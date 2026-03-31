@@ -39,7 +39,7 @@ export default function HomePage() {
             <span className="inline-block text-[#E83A87] text-xs font-bold tracking-[0.25em] uppercase mb-5">
               Brgy. Tibig, Lipa City, Batangas · Est. 2026
             </span>
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6">
               Molten<br />
               <span className="text-[#E83A87]">Chocolate</span><br />
               Inside.
@@ -51,7 +51,7 @@ export default function HomePage() {
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/menu"
-                className="bg-[#E83A87] text-white hover:bg-white hover:text-black rounded-full px-8 py-4 font-bold text-sm tracking-widest uppercase transition-all"
+                className="bg-[#E83A87] text-white hover:bg-white hover:text-black rounded-full px-8 py-4 font-bold text-sm tracking-widest uppercase transition-all touch-manipulation"
               >
                 Order Now
               </Link>
