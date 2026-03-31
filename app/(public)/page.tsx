@@ -33,15 +33,15 @@ export default function HomePage() {
           className="object-cover object-center opacity-80"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-5 pb-16 md:pb-24">
+        <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(to top, #000000 0%, rgba(0,0,0,0.4) 50%, transparent 100%)" }} />
+        <div className="relative z-[2] w-full max-w-7xl mx-auto px-5 pb-16 md:pb-24">
           <div className="max-w-2xl fade-in-up">
-            <span className="inline-block text-[#E83A87] text-xs font-bold tracking-[0.25em] uppercase mb-5">
+            <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase mb-5" style={{ color: "#E83A87" }}>
               Brgy. Tibig, Lipa City, Batangas · Est. 2026
             </span>
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6">
               Molten<br />
-              <span className="text-[#E83A87]">Chocolate</span><br />
+              <span style={{ color: "#E83A87" }}>Chocolate</span><br />
               Inside.
             </h1>
             <p className="text-white/70 text-lg md:text-xl mb-10 font-light max-w-md leading-relaxed">
@@ -123,7 +123,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {steps.map((step) => (
               <div key={step.num} className="flex gap-5">
-                <span className="text-3xl font-black text-[#E83A87] leading-none shrink-0">{step.num}</span>
+                <span className="text-3xl font-black leading-none shrink-0" style={{ color: "#E83A87" }}>{step.num}</span>
                 <div>
                   <h3 className="font-black text-lg mb-1">{step.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">{step.desc}</p>
