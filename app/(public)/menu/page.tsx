@@ -368,7 +368,7 @@ export default function MenuPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
               {/* Schedule */}
-              <div className={sectionClass}>
+              <div className={`${sectionClass} overflow-hidden`}>
                 <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#E83A87] mb-1">Step 1</p>
                 <h2 className="font-black text-xl mb-5">Schedule</h2>
                 <div className="grid sm:grid-cols-2 gap-4">
