@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,11 +13,12 @@ import { useRouter } from "next/navigation";
 import { format, addDays } from "date-fns";
 import { Minus, Plus, X } from "lucide-react";
 
+const MapPicker = dynamic(() => import("@/components/MapPicker"), { ssr: false });
+
 const schema = z.object({
   scheduledDate: z.string().min(1, "Please select a date"),
   timeSlot: z.string().min(1, "Please select a time slot"),
   deliveryMethod: z.enum(["PICKUP", "DELIVERY"]),
-  deliveryAddress: z.string().optional(),
   promoCode: z.string().optional(),
   orderNotes: z.string().optional(),
   paymentMethod: z.enum(["GCASH", "CARD"]),
@@ -56,6 +58,10 @@ export default function MenuPage() {
   const [deliveryAvailable, setDeliveryAvailable] = useState(true);
   const [fetchingFee, setFetchingFee] = useState(false);
   const [deliveryFeeChecked, setDeliveryFeeChecked] = useState(false);
+  const [mapAddress, setMapAddress] = useState("");
+  const [mapLat, setMapLat] = useState<number | null>(null);
+  const [mapLng, setMapLng] = useState<number | null>(null);
+  const [addressError, setAddressError] = useState("");
   const [promoResult, setPromoResult] = useState<{
     valid: boolean; discountType?: string; discountValue?: number;
     partnerName?: string; message?: string;
@@ -72,6 +78,7 @@ export default function MenuPage() {
   const deliveryMethod = watch("deliveryMethod");
   const promoCodeValue = watch("promoCode");
   const paymentMethod = watch("paymentMethod");
+  const scheduledDate = watch("scheduledDate");
 
   const RESERVATION_FEE = 50;
   const subtotal = cartTotal;
@@ -86,14 +93,38 @@ export default function MenuPage() {
       .catch(() => {});
   }, []);
 
+  // Reset delivery state when method changes
+  useEffect(() => {
+    if (deliveryMethod === "PICKUP") {
+      setDeliveryFee(0);
+      setDeliveryFeeChecked(false);
+      setDeliveryAvailable(true);
+      setAddressError("");
+    }
+  }, [deliveryMethod]);
+
+  function handleMapSelect(address: string, lat: number, lng: number) {
+    setMapAddress(address);
+    setMapLat(lat);
+    setMapLng(lng);
+    setAddressError("");
+    // Reset delivery fee when location changes
+    setDeliveryFeeChecked(false);
+    setDeliveryFee(0);
+  }
+
   async function handleGetDeliveryFee() {
+    if (!mapLat || !mapLng) {
+      setAddressError("Please pin your location on the map first.");
+      return;
+    }
     setFetchingFee(true);
     setDeliveryFeeChecked(false);
     try {
       const res = await fetch("/api/delivery-fee", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dropLat: 13.9411, dropLng: 121.1631, dropAddress: "Lipa City, Batangas" }),
+        body: JSON.stringify({ dropLat: mapLat, dropLng: mapLng, dropAddress: mapAddress }),
       });
       const data = await res.json();
       setDeliveryFee(data.fee ?? 0);
@@ -127,6 +158,19 @@ export default function MenuPage() {
 
   async function onSubmit(values: FormValues) {
     if (items.length === 0) { setSubmitError("Your cart is empty."); return; }
+
+    // Client-side delivery address check
+    if (values.deliveryMethod === "DELIVERY" && !mapAddress) {
+      setAddressError("Please pin your delivery location on the map.");
+      return;
+    }
+
+    // Client-side blocked date check
+    if (blockedDates.includes(values.scheduledDate)) {
+      setSubmitError("The selected date is unavailable. Please choose another date.");
+      return;
+    }
+
     setSubmitting(true);
     setSubmitError("");
     try {
@@ -138,7 +182,7 @@ export default function MenuPage() {
         promoCode: values.promoCode || undefined,
         discount,
         deliveryMethod: values.deliveryMethod,
-        deliveryAddress: values.deliveryAddress || undefined,
+        deliveryAddress: values.deliveryMethod === "DELIVERY" ? mapAddress : undefined,
         deliveryFee: effectiveDeliveryFee,
         total,
         remainingBalance,
@@ -169,8 +213,12 @@ export default function MenuPage() {
         });
         if (!payRes.ok) throw new Error("Failed to create GCash payment link.");
         const payData = await payRes.json();
-        if (payData.checkoutUrl) { clearCart(); window.location.href = payData.checkoutUrl; }
-        else throw new Error("Failed to create GCash payment link.");
+        if (payData.checkoutUrl) {
+          clearCart(); // Only clear after payment link is confirmed
+          window.location.href = payData.checkoutUrl;
+        } else {
+          throw new Error("Failed to create GCash payment link.");
+        }
       } else {
         clearCart();
         router.push(`/track?q=${orderRef}`);
@@ -181,6 +229,8 @@ export default function MenuPage() {
       setSubmitting(false);
     }
   }
+
+  const isDateBlocked = (date: string) => blockedDates.includes(date);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -243,7 +293,6 @@ export default function MenuPage() {
                 );
               })}
             </div>
-
           </div>
 
           {/* ── RIGHT: Sticky cart (spans both rows on desktop) ── */}
@@ -324,7 +373,7 @@ export default function MenuPage() {
             </div>
           </div>
 
-          {/* ── Form (below products on desktop, below cart on mobile) ── */}
+          {/* ── Form (below products on desktop) ── */}
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
@@ -334,11 +383,18 @@ export default function MenuPage() {
                 <h2 className="font-black text-xl mb-5">Schedule</h2>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Date" error={errors.scheduledDate?.message}>
-                    <input type="date" min={format(addDays(new Date(), 1), "yyyy-MM-dd")}
-                      {...register("scheduledDate")} className={inputClass} />
-                    {blockedDates.length > 0 && (
+                    <input
+                      type="date"
+                      min={format(addDays(new Date(), 1), "yyyy-MM-dd")}
+                      {...register("scheduledDate")}
+                      className={`${inputClass} ${scheduledDate && isDateBlocked(scheduledDate) ? "border-red-400 ring-2 ring-red-200" : ""}`}
+                    />
+                    {scheduledDate && isDateBlocked(scheduledDate) && (
+                      <p className="text-red-500 text-xs mt-1.5 font-medium">This date is unavailable. Please choose another.</p>
+                    )}
+                    {blockedDates.length > 0 && !(scheduledDate && isDateBlocked(scheduledDate)) && (
                       <p className="text-xs text-gray-400 mt-1.5">
-                        Unavailable: {blockedDates.join(", ")}
+                        Unavailable dates: {blockedDates.join(", ")}
                       </p>
                     )}
                   </Field>
@@ -368,13 +424,17 @@ export default function MenuPage() {
                     </label>
                   ))}
                 </div>
+
                 {deliveryMethod === "DELIVERY" && (
-                  <div className="space-y-3">
-                    <Field label="Delivery Address">
-                      <input type="text" placeholder="Enter your full delivery address"
-                        {...register("deliveryAddress")} className={inputClass} />
-                    </Field>
-                    <button type="button" onClick={handleGetDeliveryFee} disabled={fetchingFee}
+                  <div className="space-y-4">
+                    <div>
+                      <label className={labelClass}>Pin Your Location</label>
+                      <MapPicker onSelect={handleMapSelect} />
+                      {addressError && (
+                        <p className="text-[#E83A87] text-xs mt-1.5 font-medium">{addressError}</p>
+                      )}
+                    </div>
+                    <button type="button" onClick={handleGetDeliveryFee} disabled={fetchingFee || !mapAddress}
                       className="border border-black rounded-full px-5 py-2.5 text-xs font-bold tracking-widest uppercase hover:bg-black hover:text-white transition-all disabled:opacity-40">
                       {fetchingFee ? "Calculating..." : "Get Delivery Fee"}
                     </button>

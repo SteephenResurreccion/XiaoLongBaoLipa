@@ -15,25 +15,66 @@ const orderSchema = z.object({
       price: z.number(),
       qty: z.number(),
     })
-  ),
+  ).min(1, "Cart is empty"),
   subtotal: z.number(),
   promoCode: z.string().optional(),
   discount: z.number().default(0),
-  deliveryMethod: z.enum(["delivery", "pickup"]),
+  deliveryMethod: z.enum(["DELIVERY", "PICKUP"]),
   deliveryAddress: z.string().optional(),
   deliveryFee: z.number().default(0),
   total: z.number(),
   remainingBalance: z.number(),
-  paymentMethod: z.enum(["gcash", "card"]),
+  paymentMethod: z.enum(["GCASH", "CARD"]),
   orderNotes: z.string().optional(),
   scheduledDate: z.string(),
   timeSlot: z.string(),
+}).superRefine((data, ctx) => {
+  if (data.deliveryMethod === "DELIVERY" && (!data.deliveryAddress || data.deliveryAddress.trim().length < 5)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Delivery address is required",
+      path: ["deliveryAddress"],
+    });
+  }
 });
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const data = orderSchema.parse(body);
+
+    // Enforce: scheduled date must not be blocked
+    const blockedDates = await prisma.blockedDate.findMany({ select: { date: true } });
+    const blockedList = blockedDates.map((b) => b.date);
+    if (blockedList.includes(data.scheduledDate)) {
+      return NextResponse.json(
+        { error: "The selected date is unavailable. Please choose another date." },
+        { status: 400 }
+      );
+    }
+
+    // Re-validate promo code server-side
+    let serverDiscount = 0;
+    if (data.promoCode) {
+      const promo = await prisma.promoCode.findUnique({
+        where: { code: data.promoCode.toUpperCase() },
+      });
+      if (!promo || !promo.isActive) {
+        return NextResponse.json(
+          { error: "Promo code is invalid or has expired." },
+          { status: 400 }
+        );
+      }
+      serverDiscount = promo.discountType === "fixed"
+        ? promo.discountValue
+        : Math.floor((data.subtotal * promo.discountValue) / 100);
+    }
+
+    // Use server-calculated discount to prevent tampering
+    const discount = data.promoCode ? serverDiscount : 0;
+    const deliveryFee = data.deliveryMethod === "DELIVERY" ? data.deliveryFee : 0;
+    const total = data.subtotal - discount + deliveryFee;
+    const remainingBalance = Math.max(0, total - 50);
 
     const orderRef = generateOrderRef();
 
@@ -45,13 +86,13 @@ export async function POST(request: NextRequest) {
         items: JSON.stringify(data.items),
         subtotal: data.subtotal,
         promoCode: data.promoCode || null,
-        discount: data.discount,
+        discount,
         reservationFee: 50,
         deliveryMethod: data.deliveryMethod,
         deliveryAddress: data.deliveryAddress || null,
-        deliveryFee: data.deliveryFee,
-        total: data.total,
-        remainingBalance: data.remainingBalance,
+        deliveryFee,
+        total,
+        remainingBalance,
         paymentMethod: data.paymentMethod,
         orderNotes: data.orderNotes || null,
         scheduledDate: data.scheduledDate,
@@ -66,14 +107,14 @@ export async function POST(request: NextRequest) {
       .join(", ");
     const ownerMsg =
       `New Order [${orderRef}] from ${data.customerName} (${data.mobileNumber}). ` +
-      `Items: ${itemsSummary}. Total: ${formatPrice(data.total)}. ` +
-      `Remaining: ${formatPrice(data.remainingBalance)}. ` +
-      `${data.deliveryMethod === "delivery" ? `Delivery to: ${data.deliveryAddress}` : "Pickup"}. ` +
+      `Items: ${itemsSummary}. Total: ${formatPrice(total)}. ` +
+      `Remaining: ${formatPrice(remainingBalance)}. ` +
+      `${data.deliveryMethod === "DELIVERY" ? `Delivery to: ${data.deliveryAddress}` : "Pickup"}. ` +
       `Date: ${data.scheduledDate} ${data.timeSlot}.`;
 
     const ownerMobile = process.env.OWNER_MOBILE_NUMBER;
     if (ownerMobile) {
-      await sendSMS(ownerMobile, ownerMsg).catch((e) =>
+      sendSMS(ownerMobile, ownerMsg).catch((e) =>
         console.error("Owner SMS failed:", e)
       );
     }
