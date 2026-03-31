@@ -10,7 +10,7 @@ import { useCart } from "@/context/CartContext";
 import { MENU_ITEMS, TIME_SLOTS, formatPrice } from "@/lib/utils";
 import { CartItem } from "@/types";
 import { useRouter } from "next/navigation";
-import { format, addDays } from "date-fns";
+import { addDays, format } from "date-fns";
 import { Minus, Plus, X } from "lucide-react";
 
 const MapPicker = dynamic(() => import("@/components/MapPicker"), { ssr: false });
@@ -67,12 +67,13 @@ export default function MenuPage() {
     partnerName?: string; message?: string;
   } | null>(null);
   const [discount, setDiscount] = useState(0);
+  const [scheduleMode, setScheduleMode] = useState<"ASAP" | "SCHEDULED">("ASAP");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { deliveryMethod: "PICKUP", paymentMethod: "GCASH" },
+    defaultValues: { deliveryMethod: "PICKUP", paymentMethod: "GCASH", scheduledDate: "ASAP", timeSlot: "ASAP" },
   });
 
   const deliveryMethod = watch("deliveryMethod");
@@ -162,8 +163,8 @@ export default function MenuPage() {
       return;
     }
 
-    // Client-side blocked date check
-    if (blockedDates.includes(values.scheduledDate)) {
+    // Client-side blocked date check (skip for ASAP orders)
+    if (scheduleMode === "SCHEDULED" && blockedDates.includes(values.scheduledDate)) {
       setSubmitError("The selected date is unavailable. Please choose another date.");
       return;
     }
@@ -369,29 +370,49 @@ export default function MenuPage() {
               <div className={sectionClass}>
                 <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#E83A87] mb-1">Step 1</p>
                 <h2 className="font-black text-xl mb-5">Schedule</h2>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <Field label="Date" error={errors.scheduledDate?.message}>
-                    <select
-                      {...register("scheduledDate")}
-                      className={inputClass}
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  {[
+                    { value: "ASAP", label: "Order Now", sub: "As soon as possible" },
+                    { value: "SCHEDULED", label: "Schedule", sub: "Pick a date & time" },
+                  ].map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => {
+                        setScheduleMode(opt.value as "ASAP" | "SCHEDULED");
+                        if (opt.value === "ASAP") {
+                          setValue("scheduledDate", "ASAP");
+                          setValue("timeSlot", "ASAP");
+                        } else {
+                          setValue("scheduledDate", "");
+                          setValue("timeSlot", "");
+                        }
+                      }}
+                      className={`border-2 rounded-xl p-4 text-left transition-all ${scheduleMode === opt.value ? "border-black bg-black text-white" : "border-gray-200 hover:border-gray-400"}`}
                     >
-                      <option value="">Select a date</option>
-                      {Array.from({ length: 30 }, (_, i) => addDays(new Date(), i + 1)).filter(
-                        (d) => !blockedDates.includes(format(d, "yyyy-MM-dd"))
-                      ).map((d) => (
-                        <option key={format(d, "yyyy-MM-dd")} value={format(d, "yyyy-MM-dd")}>
-                          {format(d, "EEE, MMM d")}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-                  <Field label="Time Slot" error={errors.timeSlot?.message}>
-                    <select {...register("timeSlot")} className={inputClass}>
-                      <option value="">Select a time slot</option>
-                      {TIME_SLOTS.map((slot) => <option key={slot} value={slot}>{slot}</option>)}
-                    </select>
-                  </Field>
+                      <p className="font-black text-sm">{opt.label}</p>
+                      <p className={`text-xs mt-0.5 ${scheduleMode === opt.value ? "text-gray-300" : "text-gray-400"}`}>{opt.sub}</p>
+                    </button>
+                  ))}
                 </div>
+                {scheduleMode === "SCHEDULED" && (
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <Field label="Date" error={errors.scheduledDate?.message}>
+                      <input
+                        type="date"
+                        min={format(addDays(new Date(), 1), "yyyy-MM-dd")}
+                        {...register("scheduledDate")}
+                        className={inputClass}
+                      />
+                    </Field>
+                    <Field label="Time Slot" error={errors.timeSlot?.message}>
+                      <select {...register("timeSlot")} className={inputClass}>
+                        <option value="">Select a time slot</option>
+                        {TIME_SLOTS.map((slot) => <option key={slot} value={slot}>{slot}</option>)}
+                      </select>
+                    </Field>
+                  </div>
+                )}
               </div>
 
               {/* Delivery */}
