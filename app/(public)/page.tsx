@@ -21,7 +21,7 @@ const sizes = [
 
 export default function HomePage() {
   return (
-    <div className="bg-white text-black">
+    <div className="text-black">
 
       {/* ── HERO ── */}
       <section className="relative min-h-[92vh] flex items-end overflow-hidden bg-black">
@@ -36,12 +36,12 @@ export default function HomePage() {
         <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(to top, #000000 0%, rgba(0,0,0,0.4) 50%, transparent 100%)" }} />
         <div className="relative z-[2] w-full max-w-7xl mx-auto px-5 pb-16 md:pb-24">
           <div className="max-w-2xl fade-in-up">
-            <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase mb-5" style={{ color: "#E83A87" }}>
+            <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase mb-5" style={{ color: "#e83a87" }}>
               Brgy. Tibig, Lipa City, Batangas · Est. 2026
             </span>
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6">
               Molten<br />
-              <span style={{ color: "#E83A87" }}>Chocolate</span><br />
+              <span style={{ color: "#e83a87" }}>Chocolate</span><br />
               Inside.
             </h1>
             <p className="text-white/70 text-lg md:text-xl mb-10 font-light max-w-md leading-relaxed">
@@ -51,7 +51,7 @@ export default function HomePage() {
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/menu"
-                className="bg-[#E83A87] text-white hover:bg-white hover:text-black rounded-full px-8 py-4 font-bold text-sm tracking-widest uppercase transition-all touch-manipulation"
+                className="bg-[#e83a87] text-white hover:bg-white hover:text-black rounded-full px-8 py-4 font-bold text-sm tracking-widest uppercase transition-all touch-manipulation"
               >
                 Order Now
               </Link>
@@ -71,7 +71,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-4">
             <div>
-              <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#E83A87] mb-3">The Menu</p>
+              <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#e83a87] mb-3">The Menu</p>
               <h2 className="text-4xl md:text-5xl font-black leading-tight">
                 One flavor.<br />Three sizes.
               </h2>
@@ -80,7 +80,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {sizes.map((item) => (
               <Link key={item.size} href="/menu" className="group block">
-                <div className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100 mb-5">
+                <div className="relative aspect-square overflow-hidden rounded-2xl bg-[#fedeed] mb-5">
                   <Image
                     src={item.img}
                     alt={`${item.size} — ${item.pieces} pieces`}
@@ -92,9 +92,9 @@ export default function HomePage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="font-black text-xl">{item.size}</p>
-                    <p className="text-gray-500 text-sm mt-0.5">{item.pieces} pcs · {item.desc}</p>
+                    <p className="text-[#939393] text-sm mt-0.5">{item.pieces} pcs · {item.desc}</p>
                   </div>
-                  <p className="font-black text-xl text-[#E83A87]">₱{item.price}</p>
+                  <p className="font-black text-xl text-[#e83a87]">₱{item.price}</p>
                 </div>
               </Link>
             ))}
@@ -114,19 +114,19 @@ export default function HomePage() {
       </div>
 
       {/* ── HOW TO ORDER ── */}
-      <section className="py-20 md:py-28 px-5 bg-[#FDF6EC]">
+      <section className="py-20 md:py-28 px-5 bg-[#ffefda]">
         <div className="max-w-7xl mx-auto">
           <div className="mb-14">
-            <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#E83A87] mb-3">The Process</p>
+            <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#e83a87] mb-3">The Process</p>
             <h2 className="text-4xl md:text-5xl font-black leading-tight">How to order.</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {steps.map((step) => (
               <div key={step.num} className="flex gap-5">
-                <span className="text-3xl font-black leading-none shrink-0" style={{ color: "#E83A87" }}>{step.num}</span>
+                <span className="text-3xl font-black leading-none shrink-0" style={{ color: "#e83a87" }}>{step.num}</span>
                 <div>
                   <h3 className="font-black text-lg mb-1">{step.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{step.desc}</p>
+                  <p className="text-[#4e4e4e] text-sm leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             ))}
@@ -146,7 +146,7 @@ export default function HomePage() {
           />
         </div>
         <div className="bg-black text-white flex flex-col justify-center px-10 md:px-16 py-16">
-          <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#E83A87] mb-4">No minimum order</p>
+          <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#e83a87] mb-4">No minimum order</p>
           <h2 className="text-4xl md:text-5xl font-black leading-tight mb-6">
             Order as many<br />or as few as<br />you want.
           </h2>
@@ -156,7 +156,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/menu"
-            className="self-start bg-[#E83A87] text-white hover:bg-white hover:text-black rounded-full px-8 py-4 font-bold text-sm tracking-widest uppercase transition-all"
+            className="self-start bg-[#e83a87] text-white hover:bg-white hover:text-black rounded-full px-8 py-4 font-bold text-sm tracking-widest uppercase transition-all"
           >
             Order Now
           </Link>
@@ -166,9 +166,9 @@ export default function HomePage() {
       {/* ── SOCIAL ── */}
       <section className="py-20 md:py-28 px-5 text-center">
         <div className="max-w-xl mx-auto">
-          <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#E83A87] mb-4">Stay Connected</p>
+          <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#e83a87] mb-4">Stay Connected</p>
           <h2 className="text-4xl md:text-5xl font-black mb-6">Follow our<br />journey.</h2>
-          <p className="text-gray-500 text-base mb-10 leading-relaxed">
+          <p className="text-[#939393] text-base mb-10 leading-relaxed">
             Behind-the-scenes, new updates, and sneak peeks on our social media.
           </p>
           <div className="flex justify-center gap-4 flex-wrap">
@@ -191,7 +191,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="bg-[#E83A87] py-20 md:py-28 px-5 text-center">
+      <section className="bg-[#e83a87] py-20 md:py-28 px-5 text-center">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
             Ready for your<br />molten moment?

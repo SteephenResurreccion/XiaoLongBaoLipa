@@ -64,7 +64,7 @@ export default function Footer() {
             </p>
             <Link
               href="/menu"
-              className="inline-block bg-[#E83A87] text-white rounded-full px-6 py-3 text-xs font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-all"
+              className="inline-block bg-[#e83a87] text-white rounded-full px-6 py-3 text-xs font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-all"
             >
               Order Now
             </Link>

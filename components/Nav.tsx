@@ -50,7 +50,7 @@ export default function Nav() {
       </div>
 
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-white border-b border-gray-100">
+      <nav className="sticky top-0 z-50 bg-[#ffefda] border-b border-[#c6c6c6]">
         <div className="max-w-7xl mx-auto px-5 h-14 grid grid-cols-3 items-center">
 
           {/* Left: desktop links */}
@@ -59,7 +59,7 @@ export default function Nav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-xs font-semibold tracking-widest uppercase text-black hover:text-[#E83A87] transition-colors"
+                className="text-xs font-semibold tracking-widest uppercase text-black hover:text-[#e83a87] transition-colors"
               >
                 {link.label}
               </Link>
@@ -96,7 +96,7 @@ export default function Nav() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-xs font-semibold tracking-widest uppercase text-black hover:text-[#E83A87] transition-colors"
+                  className="text-xs font-semibold tracking-widest uppercase text-black hover:text-[#e83a87] transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -105,17 +105,17 @@ export default function Nav() {
 
             <div className="flex items-center gap-3">
               <a href={FB_URL} target="_blank" rel="noopener noreferrer" aria-label="Facebook"
-                className="text-black hover:text-[#E83A87] transition-colors hidden sm:block">
+                className="text-black hover:text-[#e83a87] transition-colors hidden sm:block">
                 <FacebookIcon />
               </a>
               <a href={TIKTOK_URL} target="_blank" rel="noopener noreferrer" aria-label="TikTok"
-                className="text-black hover:text-[#E83A87] transition-colors hidden sm:block">
+                className="text-black hover:text-[#e83a87] transition-colors hidden sm:block">
                 <TikTokIcon />
               </a>
-              <Link href="/menu" className="relative text-black hover:text-[#E83A87] transition-colors">
+              <Link href="/menu" className="relative text-black hover:text-[#e83a87] transition-colors">
                 <ShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-[#E83A87] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold leading-none">
+                  <span className="absolute -top-2 -right-2 bg-[#e83a87] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold leading-none">
                     {cartCount}
                   </span>
                 )}
@@ -126,24 +126,24 @@ export default function Nav() {
 
         {/* Mobile drawer */}
         {open && (
-          <div className="md:hidden bg-white border-t border-gray-100 px-5 py-4 flex flex-col">
+          <div className="md:hidden bg-[#ffefda] border-t border-[#c6c6c6] px-5 py-4 flex flex-col">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-bold tracking-widest uppercase text-black hover:text-[#E83A87] transition-colors py-3 touch-manipulation"
+                className="text-sm font-bold tracking-widest uppercase text-black hover:text-[#e83a87] transition-colors py-3 touch-manipulation"
                 onClick={() => setOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="flex gap-4 pt-4 border-t border-gray-100">
+            <div className="flex gap-4 pt-4 border-t border-[#c6c6c6]">
               <a href={FB_URL} target="_blank" rel="noopener noreferrer" aria-label="Facebook"
-                className="text-black hover:text-[#E83A87] transition-colors">
+                className="text-black hover:text-[#e83a87] transition-colors">
                 <FacebookIcon />
               </a>
               <a href={TIKTOK_URL} target="_blank" rel="noopener noreferrer" aria-label="TikTok"
-                className="text-black hover:text-[#E83A87] transition-colors">
+                className="text-black hover:text-[#e83a87] transition-colors">
                 <TikTokIcon />
               </a>
             </div>

@@ -1,8 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans, Syne } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Xiao Long Bow — Chocolate Xiao Long Bao in Lipa City, Batangas | Order Online",
@@ -26,7 +36,7 @@ export default function RootLayout({
   const gaId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en" className={`${dmSans.variable} ${syne.variable}`}>
       <head>
         <meta name="color-scheme" content="light" />
         {gaId && (
@@ -48,7 +58,7 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className="min-h-screen flex flex-col bg-[#FDF6EC]">
+      <body className="min-h-screen flex flex-col">
         {children}
       </body>
     </html>
