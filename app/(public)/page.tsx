@@ -76,12 +76,6 @@ export default function HomePage() {
                 One flavor.<br />Three sizes.
               </h2>
             </div>
-            <Link
-              href="/menu"
-              className="self-start md:self-auto border border-black rounded-full px-7 py-3 text-xs font-bold tracking-widest uppercase hover:bg-black hover:text-white transition-all"
-            >
-              Order Now →
-            </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {sizes.map((item) => (
