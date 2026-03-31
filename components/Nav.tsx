@@ -91,7 +91,7 @@ export default function Nav() {
           {/* Center: logo */}
           <div className="flex justify-center">
             <Link href="/" className="flex flex-col items-center gap-0.5 leading-none">
-              <span className="font-display text-lg font-black tracking-tight text-black uppercase whitespace-nowrap">
+              <span className="text-lg font-black tracking-tight text-black uppercase whitespace-nowrap">
                 Xiao Long Bow
               </span>
               <span className="text-[9px] tracking-[0.25em] text-[#939393] uppercase font-medium">

@@ -36,7 +36,7 @@ export default function HomePage() {
         <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(to top, #000000 0%, rgba(0,0,0,0.4) 50%, transparent 100%)" }} />
         <div className="relative z-[2] w-full max-w-7xl mx-auto px-5 pb-16 md:pb-24">
           <div className="max-w-2xl fade-in-up">
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-none tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-white leading-[1.05] tracking-tight mb-6">
               Molten<br />
               <span style={{ color: "#e83a87" }}>Chocolate</span><br />
               Inside.
