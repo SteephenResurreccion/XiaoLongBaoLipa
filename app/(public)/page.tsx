@@ -24,14 +24,23 @@ export default function HomePage() {
     <div className="text-black">
 
       {/* ── HERO ── */}
-      <section className="grid md:grid-cols-2 min-h-[92vh]">
-        {/* Left: text */}
-        <div className="bg-black flex flex-col justify-center px-8 md:px-16 py-20 order-2 md:order-1">
-          <div className="max-w-lg fade-in-up">
+      <section className="relative min-h-[92vh] flex items-end overflow-hidden bg-black">
+        <Image
+          src="/hero-gemini.jpg"
+          alt="Chocolate Xiao Long Bao with molten chocolate dripping"
+          fill
+          priority
+          className="object-cover object-center opacity-80"
+          style={{ filter: "blur(0.6px)" }}
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(to top, #000000 0%, rgba(0,0,0,0.45) 50%, transparent 100%)" }} />
+        <div className="relative z-[2] w-full max-w-7xl mx-auto px-5 pb-16 md:pb-24">
+          <div className="max-w-2xl fade-in-up">
             <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase mb-5" style={{ color: "#e83a87" }}>
               Brgy. Tibig, Lipa City, Batangas · Est. 2026
             </span>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[0.95] tracking-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6">
               Molten<br />
               <span style={{ color: "#e83a87" }}>Chocolate</span><br />
               Inside.
@@ -55,17 +64,6 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-        </div>
-        {/* Right: image at natural proportions */}
-        <div className="relative min-h-[55vw] md:min-h-0 overflow-hidden order-1 md:order-2">
-          <Image
-            src="/Gemini_Generated_Image_9glzne9glzne9glz.png"
-            alt="Chocolate Xiao Long Bao with molten chocolate dripping"
-            fill
-            priority
-            className="object-cover object-center"
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
         </div>
       </section>
 
