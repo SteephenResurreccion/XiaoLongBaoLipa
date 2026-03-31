@@ -371,13 +371,13 @@ export default function MenuPage() {
               <div className={sectionClass}>
                 <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#E83A87] mb-1">Step 1</p>
                 <h2 className="font-black text-xl mb-5">Schedule</h2>
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-4 overflow-hidden">
                   <Field label="Date" error={errors.scheduledDate?.message}>
                     <input
                       type="date"
                       min={format(addDays(new Date(), 1), "yyyy-MM-dd")}
                       {...register("scheduledDate")}
-                      className={`${inputClass} ${scheduledDate && isDateBlocked(scheduledDate) ? "border-red-400 ring-2 ring-red-200" : ""}`}
+                      className={`${inputClass} min-w-0 max-w-full ${scheduledDate && isDateBlocked(scheduledDate) ? "border-red-400 ring-2 ring-red-200" : ""}`}
                     />
                     {scheduledDate && isDateBlocked(scheduledDate) && (
                       <p className="text-red-500 text-xs mt-1.5 font-medium">This date is unavailable. Please choose another.</p>
