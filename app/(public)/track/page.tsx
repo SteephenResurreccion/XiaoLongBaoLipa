@@ -26,7 +26,7 @@ interface OrderResult {
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; desc: string }> = {
   PENDING:   { label: "Pending",   color: "text-yellow-700", bg: "bg-yellow-50 border-yellow-200",   desc: "Your order has been received. We'll confirm within 24 hours." },
-  CONFIRMED: { label: "Confirmed", color: "text-green-700",  bg: "bg-green-50 border-green-200",    desc: "Your order is confirmed! Prepare your remaining balance." },
+  CONFIRMED: { label: "Confirmed", color: "text-green-700",  bg: "bg-green-50 border-green-200",    desc: "Your order is confirmed! We will contact you with pickup or delivery details." },
   DELIVERED: { label: "Delivered", color: "text-gray-700",   bg: "bg-gray-50 border-gray-200",      desc: "Order complete. Thank you for ordering from Xiao Long Bow!" },
 };
 
@@ -165,12 +165,8 @@ function TrackForm() {
                   </div>
                 )}
                 <div className="flex justify-between font-black text-base border-t border-gray-100 pt-2">
-                  <span>Total</span><span>{formatPrice(order.total)}</span>
+                  <span>Total Paid</span><span>{formatPrice(order.total)}</span>
                 </div>
-                <div className="flex justify-between text-[#E83A87] font-bold text-sm">
-                  <span>Remaining Balance</span><span>{formatPrice(order.remainingBalance)}</span>
-                </div>
-                <p className="text-xs text-gray-400">Remaining balance due on {order.deliveryMethod === "PICKUP" ? "pickup" : "delivery"}.</p>
               </div>
 
               {order.orderNotes && (

@@ -74,7 +74,6 @@ export async function POST(request: NextRequest) {
     const discount = data.promoCode ? serverDiscount : 0;
     const deliveryFee = data.deliveryMethod === "DELIVERY" ? data.deliveryFee : 0;
     const total = data.subtotal - discount + deliveryFee;
-    const remainingBalance = Math.max(0, total - 50);
 
     const orderRef = generateOrderRef();
 
@@ -87,12 +86,12 @@ export async function POST(request: NextRequest) {
         subtotal: data.subtotal,
         promoCode: data.promoCode || null,
         discount,
-        reservationFee: 50,
+        reservationFee: 0,
         deliveryMethod: data.deliveryMethod,
         deliveryAddress: data.deliveryAddress || null,
         deliveryFee,
         total,
-        remainingBalance,
+        remainingBalance: 0,
         paymentMethod: data.paymentMethod,
         orderNotes: data.orderNotes || null,
         scheduledDate: data.scheduledDate,
@@ -108,9 +107,8 @@ export async function POST(request: NextRequest) {
     const ownerMsg =
       `New Order [${orderRef}] from ${data.customerName} (${data.mobileNumber}). ` +
       `Items: ${itemsSummary}. Total: ${formatPrice(total)}. ` +
-      `Remaining: ${formatPrice(remainingBalance)}. ` +
       `${data.deliveryMethod === "DELIVERY" ? `Delivery to: ${data.deliveryAddress}` : "Pickup"}. ` +
-      `Date: ${data.scheduledDate} ${data.timeSlot}.`;
+      `Date: ${data.scheduledDate} ${data.timeSlot}. Pay: ${data.paymentMethod}.`;
 
     const ownerMobile = process.env.OWNER_MOBILE_NUMBER;
     if (ownerMobile) {

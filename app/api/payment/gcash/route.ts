@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     const { checkoutUrl, paymentIntentId } = await createPaymentLink(
       amount,
-      `Xiao Long Bow reservation — ${order.orderRef}`,
+      `Xiao Long Bow order — ${order.orderRef}`,
       orderId
     );
 

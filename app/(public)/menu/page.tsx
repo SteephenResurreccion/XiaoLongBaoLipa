@@ -80,11 +80,9 @@ export default function MenuPage() {
   const paymentMethod = watch("paymentMethod");
   const scheduledDate = watch("scheduledDate");
 
-  const RESERVATION_FEE = 50;
   const subtotal = cartTotal;
   const effectiveDeliveryFee = deliveryMethod === "DELIVERY" ? deliveryFee : 0;
   const total = subtotal - discount + effectiveDeliveryFee;
-  const remainingBalance = Math.max(0, total - RESERVATION_FEE);
 
   useEffect(() => {
     fetch("/api/blocked-dates")
@@ -185,7 +183,7 @@ export default function MenuPage() {
         deliveryAddress: values.deliveryMethod === "DELIVERY" ? mapAddress : undefined,
         deliveryFee: effectiveDeliveryFee,
         total,
-        remainingBalance,
+        remainingBalance: 0,
         paymentMethod: values.paymentMethod,
         orderNotes: values.orderNotes || undefined,
         scheduledDate: values.scheduledDate,
@@ -209,7 +207,7 @@ export default function MenuPage() {
         const payRes = await fetch("/api/payment/gcash", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId, amount: RESERVATION_FEE }),
+          body: JSON.stringify({ orderId, amount: total }),
         });
         if (!payRes.ok) throw new Error("Failed to create GCash payment link.");
         const payData = await payRes.json();
@@ -358,14 +356,6 @@ export default function MenuPage() {
                     <div className="flex justify-between font-black text-base border-t border-gray-100 pt-2">
                       <span>Total</span>
                       <span>{formatPrice(total)}</span>
-                    </div>
-                    <div className="flex justify-between text-xs text-[#E83A87] font-bold">
-                      <span>Reservation (now)</span>
-                      <span>₱50</span>
-                    </div>
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Remaining on delivery</span>
-                      <span className="font-bold text-black">{formatPrice(remainingBalance)}</span>
                     </div>
                   </div>
                 </div>
@@ -535,7 +525,7 @@ export default function MenuPage() {
 
               <button type="submit" disabled={submitting || items.length === 0}
                 className="w-full bg-[#E83A87] text-white hover:bg-black rounded-full py-5 font-black text-sm tracking-widest uppercase transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-                {submitting ? "Processing..." : `Pay ₱50 Reservation Fee`}
+                {submitting ? "Processing..." : `Pay ${formatPrice(total)}`}
               </button>
             </form>
           </div>

@@ -3,7 +3,6 @@ import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/auth";
 import { sendSMS } from "@/lib/semaphore";
-import { formatPrice } from "@/lib/utils";
 
 const schema = z.object({
   status: z.enum(["PENDING", "CONFIRMED", "DELIVERED"]),
@@ -30,8 +29,7 @@ export async function PATCH(
     if (status === "CONFIRMED") {
       const customerMsg =
         `Hi ${order.customerName}! Your Xiao Long Bow order [${order.orderRef}] is CONFIRMED! ` +
-        `Remaining balance: ${formatPrice(order.remainingBalance)} to be paid on ` +
-        `${order.deliveryMethod === "delivery" ? "delivery" : "pickup"}. ` +
+        `${order.deliveryMethod === "DELIVERY" ? "We will deliver to your address." : "Please proceed to our pickup location."} ` +
         `Date: ${order.scheduledDate}, ${order.timeSlot}. Thank you!`;
 
       await sendSMS(order.mobileNumber, customerMsg).catch((e) =>

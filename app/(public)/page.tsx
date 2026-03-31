@@ -9,7 +9,7 @@ const steps = [
   { num: "02", title: "Choose Date & Time", desc: "Select your preferred pickup or delivery schedule." },
   { num: "03", title: "Delivery or Pickup", desc: "Free pickup, or we deliver via Lalamove to your door." },
   { num: "04", title: "Promo Code", desc: "Have a partner code? Apply it for an exclusive discount." },
-  { num: "05", title: "Pay Reservation Fee", desc: "Secure your slot with ₱50 — deducted from your total." },
+  { num: "05", title: "Pay Online", desc: "Pay the full amount securely via GCash or card." },
   { num: "06", title: "SMS Confirmation", desc: "We confirm via SMS within 24 hours. That's it." },
 ];
 
@@ -158,7 +158,7 @@ export default function HomePage() {
           </h2>
           <p className="text-white/60 text-base leading-relaxed mb-8 max-w-sm">
             Start with a Small (5 pcs) or go all-in with a Large (15 pcs).
-            Mix sizes in one order. Reserve your slot with just ₱50.
+            Mix sizes in one order. Pay the full amount securely online.
           </p>
           <Link
             href="/menu"
