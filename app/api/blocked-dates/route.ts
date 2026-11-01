@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { isDemo } from "@/lib/demo";
 
 export async function GET() {
+  if (isDemo()) return NextResponse.json([]);
   try {
     const blocked = await prisma.blockedDate.findMany({
       select: { date: true, reason: true },

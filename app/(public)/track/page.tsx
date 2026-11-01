@@ -46,6 +46,10 @@ function TrackForm() {
   async function doTrack(q: string) {
     setLoading(true); setError(""); setOrder(null);
     try {
+      // Portfolio demo: orders exist only in the browser tab that placed them (see /demo-payment).
+      const demoOrder = sessionStorage.getItem(`xlb-demo-order:${q.trim().toUpperCase()}`);
+      if (demoOrder) { setOrder(JSON.parse(demoOrder)); return; }
+
       const res = await fetch(`/api/track?q=${encodeURIComponent(q)}`);
       if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Order not found."); }
       const data = await res.json();

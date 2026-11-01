@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createPaymentIntent } from "@/lib/stripe";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
+import { demoDisabledResponse, isDemo } from "@/lib/demo";
 
 const schema = z.object({
   orderId: z.string(),
@@ -9,6 +10,7 @@ const schema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  if (isDemo()) return demoDisabledResponse();
   try {
     const body = await request.json();
     const { orderId, amount } = schema.parse(body);

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import prisma from "@/lib/prisma";
+import { demoDisabledResponse, isDemo } from "@/lib/demo";
 
 export async function POST(request: NextRequest) {
+  if (isDemo()) return demoDisabledResponse();
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
   const body = await request.text();
   const sig = request.headers.get("stripe-signature");

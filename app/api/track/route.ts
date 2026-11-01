@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { isDemo } from "@/lib/demo";
 
 export async function GET(request: NextRequest) {
   const q = request.nextUrl.searchParams.get("q");
@@ -8,6 +9,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       { error: "Please enter a mobile number or order reference" },
       { status: 400 }
+    );
+  }
+
+  // Portfolio demo: orders are never saved, so the track page reads them from the browser tab instead.
+  if (isDemo()) {
+    return NextResponse.json(
+      { error: "In the demo, you can only track an order placed in this browser tab, by its reference." },
+      { status: 404 }
     );
   }
 

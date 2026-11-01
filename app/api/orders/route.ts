@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { sendSMS } from "@/lib/semaphore";
-import { generateOrderRef, formatPrice } from "@/lib/utils";
+import { generateOrderRef, formatPrice, MENU_ITEMS } from "@/lib/utils";
+import { DEMO_DELIVERY_FEE, DEMO_PROMO, isDemo } from "@/lib/demo";
 
 const orderSchema = z.object({
   customerName: z.string().min(2),
@@ -42,6 +43,46 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const data = orderSchema.parse(body);
+
+    // Portfolio demo: price the order on the server, then hand it back without saving it or texting anyone.
+    if (isDemo()) {
+      // Every price comes from the server's menu, never from the request.
+      const items = data.items.flatMap((item) => {
+        const menuItem = MENU_ITEMS.find((m) => m.id === item.id);
+        return menuItem && item.qty > 0
+          ? [{ id: menuItem.id, size: menuItem.size, pieces: menuItem.pieces, price: menuItem.price, qty: item.qty }]
+          : [];
+      });
+      if (items.length === 0) {
+        return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
+      }
+      const subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+      if (data.promoCode && data.promoCode.toUpperCase() !== DEMO_PROMO.code) {
+        return NextResponse.json({ error: "Promo code is invalid or has expired." }, { status: 400 });
+      }
+      const discount = data.promoCode ? Math.floor((subtotal * DEMO_PROMO.discountValue) / 100) : 0;
+      const deliveryFee = data.deliveryMethod === "DELIVERY" ? DEMO_DELIVERY_FEE : 0;
+      const orderRef = generateOrderRef();
+      const demoOrder = {
+        orderRef,
+        customerName: data.customerName,
+        mobileNumber: data.mobileNumber,
+        items,
+        subtotal,
+        discount,
+        deliveryMethod: data.deliveryMethod,
+        deliveryAddress: data.deliveryAddress,
+        deliveryFee,
+        total: subtotal - discount + deliveryFee,
+        remainingBalance: 0,
+        paymentMethod: data.paymentMethod,
+        scheduledDate: data.scheduledDate,
+        timeSlot: data.timeSlot,
+        status: "PENDING",
+        orderNotes: data.orderNotes,
+      };
+      return NextResponse.json({ orderId: null, orderRef, demoOrder });
+    }
 
     // Enforce: scheduled date must not be blocked
     const blockedDates = await prisma.blockedDate.findMany({ select: { date: true } });

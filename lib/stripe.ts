@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { isDemo } from "@/lib/demo";
 
 interface PaymentIntentResult {
   clientSecret: string;
@@ -10,6 +11,7 @@ export async function createPaymentIntent(
   currency: string,
   orderId: string
 ): Promise<PaymentIntentResult> {
+  if (isDemo()) throw new Error("Stripe is turned off in the portfolio demo.");
   const secretKey = process.env.STRIPE_SECRET_KEY;
 
   if (!secretKey) {

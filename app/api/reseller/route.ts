@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { sendSMS } from "@/lib/semaphore";
+import { isDemo } from "@/lib/demo";
 
 const schema = z.object({
   name: z.string().min(2),
@@ -16,6 +17,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const data = schema.parse(body);
+
+    // Portfolio demo: validate only; nothing is saved and nobody is texted.
+    if (isDemo()) return NextResponse.json({ success: true });
 
     await prisma.resellerApplication.create({ data });
 

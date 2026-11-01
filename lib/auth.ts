@@ -1,7 +1,9 @@
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
+import { demoDisabledResponse, isDemo } from "@/lib/demo";
 
 export async function requireAdminSession() {
+  if (isDemo()) return { session: null, error: demoDisabledResponse() };
   const session = await getServerSession();
   if (!session?.user?.email) {
     return { session: null, error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };

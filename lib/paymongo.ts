@@ -1,4 +1,5 @@
 import axios from "axios";
+import { isDemo } from "@/lib/demo";
 
 interface PaymentLinkResult {
   checkoutUrl: string;
@@ -10,6 +11,7 @@ export async function createPaymentLink(
   description: string,
   orderId: string
 ): Promise<PaymentLinkResult> {
+  if (isDemo()) throw new Error("PayMongo is turned off in the portfolio demo.");
   const secretKey = process.env.PAYMONGO_SECRET_KEY;
 
   if (!secretKey) {

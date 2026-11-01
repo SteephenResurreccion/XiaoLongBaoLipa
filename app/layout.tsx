@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { isDemo } from "@/lib/demo";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -33,12 +34,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const gaId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+  // The demo loads no analytics and asks search engines not to index it as a real shop.
+  const demo = isDemo();
+  const gaId = demo ? undefined : process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
 
   return (
     <html lang="en" className={`${dmSans.variable} ${spaceGrotesk.variable}`}>
       <head>
         <meta name="color-scheme" content="light" />
+        {demo && <meta name="robots" content="noindex" />}
         {gaId && (
           <>
             <script

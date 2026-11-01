@@ -1,6 +1,9 @@
 import axios from "axios";
+import { isDemo } from "@/lib/demo";
 
 export async function sendSMS(to: string, message: string): Promise<void> {
+  if (isDemo()) return; // Portfolio demo: never text anyone.
+
   const apiKey = process.env.SEMAPHORE_API_KEY;
 
   if (!apiKey) {

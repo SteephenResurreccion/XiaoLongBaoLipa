@@ -201,7 +201,15 @@ export default function MenuPage() {
         throw new Error(err.error || "Failed to create order");
       }
 
-      const { orderId, orderRef } = await res.json();
+      const { orderId, orderRef, demoOrder } = await res.json();
+
+      // Portfolio demo: nothing was saved, so keep the order in this tab and use the test payment page.
+      if (demoOrder) {
+        sessionStorage.setItem(`xlb-demo-order:${orderRef}`, JSON.stringify(demoOrder));
+        clearCart();
+        router.push(`/demo-payment?ref=${orderRef}`);
+        return;
+      }
 
       if (values.paymentMethod === "GCASH") {
         const payRes = await fetch("/api/payment/gcash", {

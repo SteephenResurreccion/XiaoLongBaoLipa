@@ -1,12 +1,24 @@
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import { isDemo } from "@/lib/demo";
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  if (isDemo()) {
+    return (
+      <div className="min-h-screen bg-[#FDF6EC] flex items-center justify-center">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center max-w-sm">
+          <h1 className="text-xl font-bold mb-2">Admin is off in the demo</h1>
+          <p className="text-gray-500 text-sm">This portfolio demo saves no orders, so there is nothing to manage.</p>
+        </div>
+      </div>
+    );
+  }
+
   const session = await getServerSession();
 
   if (!session?.user?.email) {

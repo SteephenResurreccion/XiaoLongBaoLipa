@@ -1,5 +1,6 @@
 import axios from "axios";
 import crypto from "crypto";
+import { DEMO_DELIVERY_FEE, isDemo } from "@/lib/demo";
 
 interface DeliveryFeeResult {
   fee: number;
@@ -13,8 +14,8 @@ export async function getDeliveryFee(
 ): Promise<DeliveryFeeResult> {
   const environment = process.env.LALAMOVE_ENVIRONMENT;
 
-  if (environment === "sandbox") {
-    return { fee: 150, available: true };
+  if (isDemo() || environment === "sandbox") {
+    return { fee: DEMO_DELIVERY_FEE, available: true };
   }
 
   const apiKey = process.env.LALAMOVE_API_KEY;
